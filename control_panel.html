@@ -1,0 +1,35 @@
+<!doctype html>
+<html ng-app="myapp" ng-csp>
+    <head>
+        <title>Ursus - Control Panel</title>
+        <style>
+            body {
+                font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+                font-size: 100%;
+            }
+        </style>
+        <script src="angular.min.js"></script>
+        <script src="pinecone.js"></script>
+        <script src="ursus.js"></script>
+        <script src="tombstone.js"></script>
+    </head>
+    <body>
+        <div style="width: 480px">
+            <h5>Bean Ursus - Control Panel</h5>
+            <h5>By undefined</h5>
+        </div>
+
+        <div ng-controller="mainController">
+            <h5>Tombstone:</h5>
+            <input type="button" ng-click="Ursus.fnGetTabsInfos();" value="Seal in J-Tombstone"/>
+            <p>Spawned Tombstone</p>
+            <textarea id="tabsSpawnArea" style="width: 460px; height: 100px">[{{tabsInfo}}]</textarea>
+
+            <p>Resurrect from Tombstone</p>
+            <textarea id="tabsRespawnAreaIn" style="width: 460px; height: 100px"></textarea>
+            <input type="button" ng-click="Ursus.fnSpawnTabsFromInfos();" value="Rejuvenate"/>
+
+        </div>
+
+    </body>
+</html>

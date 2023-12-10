@@ -1,0 +1,46 @@
+{
+  "name": "Ursus",
+  "manifest_version": 2,
+  "version": "2.0.1",
+  "description": "Bean(TM) Nuts(TM) Walnut Ursus Ursnium For Chrome",
+  "browser_action": {
+    "default_icon" : "icon.png",
+    "default_popup": "control_panel.html",
+    "default_title": "Ursus - Control Panel"
+  },
+
+  "background": {
+    "page"     : "background.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "http://www.baidu.com/*", "https://www.baidu.com/*","https://www.uc123.com/*", "http://www.uc123.com/*",
+        "http://wenku.baidu.com/*", "https://wenku.baidu.com/*"
+      ],
+      "js": ["fuckers/fuckBaidu.js"]
+    },
+    {
+      "matches": ["http://fanyi.baidu.com/*", "https://fanyi.baidu.com/*"],
+      "js": ["fuckers/fuckBaiduFanyi.js"]
+    },
+    {
+      "matches": ["http://blog.csdn.net/*", "https://blog.csdn.net/*"],
+      "js": ["fuckers/fuckCSDN.js"]
+    },
+    {
+      "matches": ["http://www.zhihu.com/*", "https://www.zhihu.com/*", "https://zhuanlan.zhihu.com/*"],
+      "js": ["fuckers/fuckZhiHu.js"]
+    },
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "js": ["fuckers/fuckThemAll2Death.js"]
+    }
+  ],
+
+  "permissions": [
+    "tabs",
+    "activeTab"
+  ]
+}
