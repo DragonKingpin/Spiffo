@@ -21,6 +21,9 @@ You can save multiple check points (Tombstone) grouped by different themes, time
 ![image](https://github.com/DragonsPrime/Ursnium/assets/87111937/3e9ee74a-3160-436f-97a0-3320f062bb2c)\
 如图所示，点击 Rejuvenate，立即还原你之前所有保存的还原点\
 As shown in the figure, clicking "Rejuvenate" instantly restores all previously saved check points from JSON String.
+![image](https://github.com/DragonsPrime/Ursnium/assets/87111937/35beb252-933e-46c0-b5f6-22769a2cfd68)\
+将这些“墓碑”本地化
+Save your check points "Tombstones" into your disk.
 
 ## Sifting some ads | 过滤一些广告
 这些是自动包含的，都是我常用的一些小脚本，可自行编辑。
