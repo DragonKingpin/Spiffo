@@ -1,9 +1,9 @@
-# Ursnium
+# Ursunium
 ![icon](https://github.com/DragonsPrime/Ursnium/assets/87111937/a619dcfe-1b4b-41bf-914a-24c89b5a434d)
 小熊熊~
 一个非常萌萌哒的小工具，Chrome 状态保存和本地化的小工具，支持保存选项卡、窗口等状态和支持常见广告过滤。\
 Chrome status tombstone tiny-tools, to store tabs, windows and to sift common ads. \
-Copyright(C) Bean Nuts Walnut Ursus Ursnium, Bean Nuts Digital Foundation, Harold, undefined
+Copyright(C) Bean Nuts Walnut Ursus Ursunium, Bean Nuts Digital Foundation, Harold, undefined
 
 # What does it support | 支持啥
 ## 将你的 选项卡、窗口等状态封印到 JSON 当中 | Seal and Store your tabs and windows status into JSON tombstone
