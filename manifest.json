@@ -1,16 +1,27 @@
 {
-  "name": "Ursus",
-  "manifest_version": 2,
-  "version": "2.0.1",
-  "description": "Bean(TM) Nuts(TM) Walnut Ursus Ursunium For Chrome",
-  "browser_action": {
+  "name": "Spiffo",
+  "manifest_version": 3,
+  "version": "3.1.1",
+  "author": "Dragon King",
+
+  "description": "Bean(TM) Nuts(TM) Walnut Trident Spiffo For Chrome",
+  "action": {
     "default_icon" : "icon.png",
     "default_popup": "control_panel.html",
-    "default_title": "Ursus - Control Panel"
+    "default_title": "Spiffo - Control Panel"
+  },
+
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      }
+    }
   },
 
   "background": {
-    "page"     : "background.html"
+    "service_worker"     : "background.js",
+    "type": "module"
   },
 
   "content_scripts": [
@@ -35,12 +46,21 @@
     },
     {
       "matches": ["http://*/*","https://*/*"],
-      "js": ["fuckers/fuckThemAll2Death.js"]
+      "js": [
+        "fuckers/fuckThemAll2Death.js"
+      ]
     }
+  ],
+
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
   ],
 
   "permissions": [
     "tabs",
-    "activeTab"
+    "activeTab",
+    "storage",
+    "scripting"
   ]
 }

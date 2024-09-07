@@ -1,58 +1,32 @@
-Ursus.fnInitWinsSpawnEvent = function () {
-    //var event = new CustomEvent( "WinsSpawnEvent", { "args":{} } );
-    window.addEventListener('WinsSpawnEvent', function ( event ) {
-        if( $isTrue( event.detail ) && $isTrue( event.detail.winMapped ) ) {
-            let winMapped = event.detail.winMapped;
-            chrome.windows.getCurrent( {}, function( winThis ) {
-                try {
-                    let winAt = 0;
+var Spiffo = {};
 
-                    for ( let k in winMapped ) {
-                        if ( winMapped.hasOwnProperty( k ) ) {
-                            let win  = winMapped[ k ];
-                            let tabs = win [ "tabs" ];
-                            if( winAt++ == 0 ) {
-                                for ( let j = 0; j < tabs.length; ++j ) {
-                                    let tab = tabs[ j ];
-                                    tab[ "windowId" ] = winThis[ "id" ];
-                                    chrome.tabs.create( tab );
-                                }
-                            }
-                            else {
-                                let winFram  = win[ "info" ];
-                                delete winFram[ "id" ]; // Legacy ID is useless.
+Spiffo.tabControl = {
+    thisTab: {},
 
-                                //alert( JSON.stringify( winFram )  )
-
-                                chrome.windows.create( winFram, function ( neoWin ) {
-                                    for ( let j = 0; j < tabs.length; ++j ) {
-                                        let tab = tabs[ j ];
-                                        tab[ "windowId" ] = neoWin[ "id" ];
-                                        delete tab[ "id"    ];
-                                        delete tab[ "index" ];
-                                        delete tab[ "openerTabId" ];
-                                        //alert( JSON.stringify( tab ) )
-                                        chrome.tabs.create( tab );
-                                    }
-
-                                    setTimeout( function () {
-                                        chrome.tabs.remove( [neoWin.tabs[0].id] );
-                                    }, 200 );
-                                } );
-                            }
-                        }
-                    }
-                }
-                catch ( e ) {
-                    alert( "Jesus Fuck !!! What->" + e.toString() );
-                }
-
-            } );
+    setTabTitle: function ( title, appended ) {
+        if( appended ) {
+            if( document.title.indexOf( title ) < 0 ) {
+                document.title = title + document.title;
+            }
         }
-    }, false );
-}
+        else {
+            document.title = title;
+        }
+    },
+};
 
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if ( changeInfo.status === 'complete' || changeInfo[ "title" ] ) {
+        console.log( tab, changeInfo );
+        chrome.storage.sync.get(tab.url, function(data) {
+            if ( data[ tab.url ] && data[ tab.url ][ "lock" ] ) {
+                chrome.scripting.executeScript({
+                    target: {tabId: tabId},
+                    func: Spiffo.tabControl.setTabTitle,
+                    args: [ data[ tab.url ][ "title" ], data[ tab.url ][ "appendMode" ] ]
+                });
+            }
+        });
+    }
+});
 
-Ursus.fnInitWinsSpawnEvent();
-
-window.Ursus = Ursus;

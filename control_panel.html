@@ -1,35 +1,75 @@
 <!doctype html>
 <html ng-app="myapp" ng-csp>
     <head>
-        <title>Ursus - Control Panel</title>
+        <title>Spiffo - Control Panel</title>
         <style>
             body {
                 font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
                 font-size: 100%;
             }
+
+            input[ type = "button" ] {
+                margin-bottom: 6px;
+            }
+
+            h5 {
+                margin: 0.8em 0 0.8em 0;
+            }
+
+            h6 {
+                margin: 0.6em 0 0.6em 0;
+            }
         </style>
         <script src="angular.min.js"></script>
         <script src="pinecone.js"></script>
-        <script src="ursus.js"></script>
+        <script src="spiffo.js"></script>
         <script src="tombstone.js"></script>
+        <script src="tab_control.js"></script>
     </head>
     <body>
-        <div style="width: 480px">
-            <h5>Bean Ursus - Control Panel</h5>
-            <h5>By undefined</h5>
+        <div style="width: 540px">
+            <h5>Bean Nuts Walnut Trident Spiffo - Control Panel</h5>
+
+            <div ng-controller="tombstoneController" id="tombstone">
+                <h5>1. Tombstone: </h5>
+                <div style="display: flex">
+                    <div style="width: 80%">
+                        <input type="button" ng-click="Spiffo.fnGetTabsInfos();" value="Seal all wins/tabs"/>
+
+                        <input type="button" ng-click="Spiffo.fnGetCurrentWinTabsInfos();" value="Seal tabs in current win"/>
+                    </div>
+
+                    <div style="width: 20%; text-align: right">
+                        <input type="button" ng-click="Spiffo.fnSpawnTabsFromInfos();" value="Resurrect"/>
+                    </div>
+                </div>
+
+                <textarea id="tabsTombArea" style="width: 535px; height: 100px">{{tabsInfo}}</textarea>
+            </div>
+
+            <div ng-controller="tabControlController" id="tabControl">
+                <h5>2. Rename Title: </h5>
+                <textarea id="title-editor" style="width: 535px; height: 35px">{{currentTabTitle}}</textarea>
+                <input type="button" value="Rename this" ng-click="Spiffo.tabControl.fnRenameThis(false);"/>
+
+                <input type="button" ng-if="!titleIsLocked" value="Lock title" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(true, false);"
+                       alt="Lock this title, preventing unexpected dom-update."
+                />
+                <input type="button" ng-if="titleIsLocked" value="Unlock title" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(false, false);"/>
+
+                <input type="button" ng-if="!titleIsLockedAppend" value="Lock Append" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(true, true);"
+                       alt="Lock this title, preventing unexpected dom-update."
+                />
+                <input type="button" ng-if="titleIsLockedAppend" value="Unlock Append" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(false, false);"/>
+
+                <div>
+                    <strong style="font-size: 0.83em;">3. ContentEditable:&nbsp;</strong>
+                    <input type="button" ng-if="!bodyContentEditable" value="Enable" ng-click="Spiffo.tabControl.setContentEditableStatus(true);"/>
+                    <input type="button" ng-if="bodyContentEditable" value="Disable" ng-click="Spiffo.tabControl.setContentEditableStatus(false);"/>
+                </div>
+            </div>
+
+            <h5 style="text-align: right">by <a href="https://www.dragonking.cn" target="_blank">Dragon King (undefined)</a></h5>
         </div>
-
-        <div ng-controller="mainController">
-            <h5>Tombstone:</h5>
-            <input type="button" ng-click="Ursus.fnGetTabsInfos();" value="Seal in J-Tombstone"/>
-            <p>Spawned Tombstone</p>
-            <textarea id="tabsSpawnArea" style="width: 460px; height: 100px">[{{tabsInfo}}]</textarea>
-
-            <p>Resurrect from Tombstone</p>
-            <textarea id="tabsRespawnAreaIn" style="width: 460px; height: 100px"></textarea>
-            <input type="button" ng-click="Ursus.fnSpawnTabsFromInfos();" value="Rejuvenate"/>
-
-        </div>
-
     </body>
 </html>

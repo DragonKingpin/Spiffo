@@ -18,13 +18,8 @@ let fuckCSDNBlog = function () {
         }
     };
 
-    let fuckCSDNLoginCopy = function () {
-        document.body.contentEditable = true;
-    };
-
     fuckCSDNBlogLoginMark();
     fuckCSDNBlogRecommendAdBox();
-    fuckCSDNLoginCopy();
 };
 
 

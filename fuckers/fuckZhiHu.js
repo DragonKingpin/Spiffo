@@ -55,6 +55,15 @@ let fuckZhiHu = function () {
             }
         }
 
+        let fuck_topSearch_items = document.querySelectorAll(".TopSearch-items");
+        if( fuck_topSearch_items ){
+            for( var i = 0; i < fuck_topSearch_items.length; i++ ) {
+                if( fuck_topSearch_items[i] ){
+                    fuck_topSearch_items[i].remove();
+                }
+            }
+        }
+
     }
 
     try {

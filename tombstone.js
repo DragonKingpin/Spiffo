@@ -1,10 +1,6 @@
-var app = angular.module('myapp',[]);
+Spiffo.app = angular.module('myapp',[]);
 
-trace( chrome.extension.getBackgroundPage() )
-
-var winBackground = chrome.extension.getBackgroundPage();
-
-Ursus.fnGetTabsInfosRecall     = function ( cb ) {
+Spiffo.fnGetTabsInfosRecall     = function ( cb ) {
     var queryInfo = {
         // active: true,
         // currentWindow: true
@@ -15,13 +11,13 @@ Ursus.fnGetTabsInfosRecall     = function ( cb ) {
     });
 };
 
-Ursus.pvfnTombInfoTabsChromify = function ( that ) {
+Spiffo.pvfnTombInfoTabsChromify = function ( that ) {
     return objKeysYokedIfExited(
         that, [ "windowId", "index", "url", "active", "pinned", "openerTabId" ]
     );
 };
 
-Ursus.pvfnTombInfoWinsChromify = function ( that, nWinId ) {
+Spiffo.pvfnTombInfoWinsChromify = function ( that, nWinId ) {
     var j = objKeysYokedIfExited(
         that, [ "focused", /* // Thoes are document's: "top", "left", "width", "height" */, "tabs", "incognito", "type", "state" ]
     );
@@ -31,14 +27,64 @@ Ursus.pvfnTombInfoWinsChromify = function ( that, nWinId ) {
     return j;
 };
 
-Ursus.pvfnSummonWinsAndTabs    = function ( winMapped ) {
+Spiffo.pvfnSummonWinsAndTabs    = function ( winMapped ) {
     var jDetail = { "detail":{ } };
-    jDetail[ "detail" ][ "winMapped" ] = winMapped;
+    //jDetail[ "detail" ][ "winMapped" ] = winMapped;
+    jDetail[ "winMapped" ] = winMapped;
 
-    winBackground.dispatchEvent( new CustomEvent( "WinsSpawnEvent", jDetail ) );
+    if( $isTrue( jDetail ) && $isTrue( jDetail.winMapped ) ) {
+        let winMapped = jDetail.winMapped;
+        chrome.windows.getCurrent( {}, function( winThis ) {
+            try {
+                let winAt = 0;
+
+                for ( let k in winMapped ) {
+                    if ( winMapped.hasOwnProperty( k ) ) {
+                        let win  = winMapped[ k ];
+                        let tabs = win [ "tabs" ];
+                        if( winAt++ === 0 ) {
+                            for ( let j = 0; j < tabs.length; ++j ) {
+                                let tab = tabs[ j ];
+                                tab[ "windowId" ] = winThis[ "id" ];
+                                chrome.tabs.create( tab );
+                            }
+                        }
+                        else {
+                            let winFram  = win[ "info" ];
+                            delete winFram[ "id" ]; // Legacy ID is useless.
+
+                            //alert( JSON.stringify( winFram )  )
+
+                            chrome.windows.create( winFram, function ( neoWin ) {
+                                for ( let j = 0; j < tabs.length; ++j ) {
+                                    let tab = tabs[ j ];
+                                    tab[ "windowId" ] = neoWin[ "id" ];
+                                    delete tab[ "id"    ];
+                                    delete tab[ "index" ];
+                                    delete tab[ "openerTabId" ];
+                                    //alert( JSON.stringify( tab ) )
+                                    chrome.tabs.create( tab );
+                                }
+
+                                setTimeout( function () {
+                                    chrome.tabs.remove( [neoWin.tabs[0].id] );
+                                }, 200 );
+                            } );
+                        }
+                    }
+                }
+            }
+            catch ( e ) {
+                alert( "Jesus Fuck !!! What->" + e.toString() );
+            }
+
+        } );
+    }
+
+    //winBackground.dispatchEvent( new CustomEvent( "WinsSpawnEvent", jDetail ) );
 };
 
-Ursus.pvfnSiftWinTabsGroupBy   = function ( winTabss ) {
+Spiffo.pvfnSiftWinTabsGroupBy   = function ( winTabss ) {
     let winMapped = {};
 
     for ( let i = 0; i < winTabss.length; i++ ) {
@@ -58,11 +104,11 @@ Ursus.pvfnSiftWinTabsGroupBy   = function ( winTabss ) {
                 winMapped[ wid ][ "tabs" ] = [];
             }
 
-            winMapped[ wid ][ "info" ] =     Ursus.pvfnTombInfoWinsChromify( jWT, wid )   ;
-            winMapped[ wid ][ "tabs" ].push( Ursus.pvfnTombInfoTabsChromify( jWT      ) ) ;
+            winMapped[ wid ][ "info" ] =     Spiffo.pvfnTombInfoWinsChromify( jWT, wid )   ;
+            winMapped[ wid ][ "tabs" ].push( Spiffo.pvfnTombInfoTabsChromify( jWT      ) ) ;
 
 
-            //chrome.tabs.create( Ursus.pvfnTombInfoTabsChromify( jTomb ) );
+            //chrome.tabs.create( Spiffo.pvfnTombInfoTabsChromify( jTomb ) );
         }
     }
 
@@ -70,33 +116,47 @@ Ursus.pvfnSiftWinTabsGroupBy   = function ( winTabss ) {
 };
 
 
-app.controller("mainController", function ($scope, $http) {
-    Ursus.fnGetTabsInfos = function (  ) {
-        Ursus.fnGetTabsInfosRecall(function(tabs) {
+Spiffo.app.controller("tombstoneController", function ($scope, $http) {
+    Spiffo.fnGetTabsInfos = function (  ) {
+        Spiffo.fnGetTabsInfosRecall(function(tabs) {
             $scope.$apply(function(){
-                $scope.tabsInfo = JSON.stringify( tabs );
+                $scope.tabsInfo = JSON.stringify( [ tabs ] );
             });
         });
     };
 
-    Ursus.fnSpawnTabsFromInfos = function (  ) {
+    Spiffo.fnGetCurrentWinTabsInfos = function (  ) {
+        chrome.windows.getCurrent(function (window) {
+            var currentWindowId = window.id;
+            trace( "Current Window ID: ", currentWindowId );
+
+            chrome.tabs.query({ windowId: currentWindowId }, function (tabs) {
+                //trace( "Tabs in current window: ", tabs );
+                $scope.$apply(function(){
+                    $scope.tabsInfo = JSON.stringify( [ tabs ] );
+                });
+            });
+        });
+    };
+
+    Spiffo.fnSpawnTabsFromInfos = function (  ) {
         try {
 
             //chrome.windows.create( { url: "http://rednest.cn" } )
-            var szTabsRespawnAreaIn = document.getElementById( "tabsRespawnAreaIn" ).value;
-            if( szTabsRespawnAreaIn ) {
+            var szTabsTombArea = document.getElementById( "tabsTombArea" ).value;
+            if( szTabsTombArea ) {
                 var jTombss = [];
-                if( szTabsRespawnAreaIn.startsWith( "[" ) && szTabsRespawnAreaIn.endsWith( "]" ) ) {
-                    jTombss = JSON.parse( szTabsRespawnAreaIn );
+                if( szTabsTombArea.startsWith( "[" ) && szTabsTombArea.endsWith( "]" ) ) {
+                    jTombss = JSON.parse( szTabsTombArea );
 
-                    let winMapped = Ursus.pvfnSiftWinTabsGroupBy( jTombss );
-                    Ursus.pvfnSummonWinsAndTabs( winMapped );
+                    let winMapped = Spiffo.pvfnSiftWinTabsGroupBy( jTombss );
+                    Spiffo.pvfnSummonWinsAndTabs( winMapped );
 
 
                     return;
                 }
 
-                var jUrls = szTabsRespawnAreaIn.split( "\n" );
+                var jUrls = szTabsTombArea.split( "\n" );
                 if( jUrls.length ) {
                     for ( let i = 0; i < jUrls.length; i++ ) {
                         var jTomb = {  };
@@ -113,11 +173,11 @@ app.controller("mainController", function ($scope, $http) {
     };
 
     $scope.urlList = [];
-    $scope.Ursus   = Ursus;
+    $scope.Spiffo   = Spiffo;
 
 
     $scope.getTabsUrl = function() {
-        Ursus.fnGetTabsInfosRecall(function(tabsUrl) {
+        Spiffo.fnGetTabsInfosRecall(function(tabsUrl) {
             $scope.$apply(function(){
                 $scope.urlList = tabsUrl;
             });
