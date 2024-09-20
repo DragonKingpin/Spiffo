@@ -46,6 +46,32 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 
+
+Spiffo.tombstone = {
+    spawnNewWin: function ( win, tabs ) {
+        let winFram  = win[ "info" ];
+        delete winFram[ "id" ]; // Legacy ID is useless.
+
+        //alert( JSON.stringify( winFram )  )
+
+        chrome.windows.create( winFram, function ( neoWin ) {
+            for ( let j = 0; j < tabs.length; ++j ) {
+                let tab = tabs[ j ];
+                tab[ "windowId" ] = neoWin[ "id" ];
+                delete tab[ "id"    ];
+                delete tab[ "index" ];
+                delete tab[ "openerTabId" ];
+                //alert( JSON.stringify( tab ) )
+                chrome.tabs.create( tab );
+            }
+
+            setTimeout( function () {
+                chrome.tabs.remove( [neoWin.tabs[0].id] );
+            }, 200 );
+        } );
+    }
+};
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if ( message.action === "WinsSpawnEvent" ) {
         if( $isTrue( message ) && $isTrue( message.data.winMapped ) ) {
@@ -59,34 +85,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     if ( winMapped.hasOwnProperty( k ) ) {
                         let win  = winMapped[ k ];
                         let tabs = win [ "tabs" ];
+                        //console.log( win );
                         if( winAt++ === 0 ) {
-                            for ( let j = 0; j < tabs.length; ++j ) {
-                                let tab = tabs[ j ];
-                                tab[ "windowId" ] = winThis[ "id" ];
-                                chrome.tabs.create( tab );
+                            try{
+                                for ( let j = 0; j < tabs.length; ++j ) {
+                                    let tab = tabs[ j ];
+                                    tab[ "windowId" ] = winThis[ "id" ];
+                                    chrome.tabs.create( tab );
+                                }
+                            }
+                            catch ( e ) {
+                                console.warn( e );
+                                Spiffo.tombstone.spawnNewWin( win, tabs );
                             }
                         }
                         else {
-                            let winFram  = win[ "info" ];
-                            delete winFram[ "id" ]; // Legacy ID is useless.
-
-                            //alert( JSON.stringify( winFram )  )
-
-                            chrome.windows.create( winFram, function ( neoWin ) {
-                                for ( let j = 0; j < tabs.length; ++j ) {
-                                    let tab = tabs[ j ];
-                                    tab[ "windowId" ] = neoWin[ "id" ];
-                                    delete tab[ "id"    ];
-                                    delete tab[ "index" ];
-                                    delete tab[ "openerTabId" ];
-                                    //alert( JSON.stringify( tab ) )
-                                    chrome.tabs.create( tab );
-                                }
-
-                                setTimeout( function () {
-                                    chrome.tabs.remove( [neoWin.tabs[0].id] );
-                                }, 200 );
-                            } );
+                            Spiffo.tombstone.spawnNewWin( win, tabs );
                         }
                     }
                 }
