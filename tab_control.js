@@ -58,8 +58,11 @@ Spiffo.app.controller("tabControlController", function ($scope, $timeout) {
                 return document.body.contentEditable === 'true';
             }
         }, function(results) {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError);
+            if ( chrome.runtime.lastError ) {
+                if( chrome.runtime.lastError.message.indexOf( "Cannot access a chrome://" ) >= 0 ) {
+                    return; // Just ignore them.
+                }
+                console.error(JSON.stringify( chrome.runtime.lastError ));
                 return;
             }
 
