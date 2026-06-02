@@ -46,6 +46,38 @@ Spiffo.pvfnSummonWinsAndTabs    = function ( winMapped ) {
     //winBackground.dispatchEvent( new CustomEvent( "WinsSpawnEvent", jDetail ) );
 };
 
+Spiffo.pvfnSealTabsToArea = function ( $scope, tabs, includeCookies ) {
+    let winMapped = Spiffo.pvfnSiftWinTabsGroupBy( [ tabs ] );
+    let tombstone = {
+        spiffoTombstoneVersion: 2,
+        createdAt: new Date().toISOString(),
+        windows: winMapped,
+        cookies: {
+            included: false,
+            scope: "sealedTabsOnly",
+            items: []
+        }
+    };
+
+    if( !includeCookies ) {
+        $scope.tabsInfo = JSON.stringify( tombstone );
+        return;
+    }
+
+    chrome.runtime.sendMessage({ action: "SealCookies", tabs: tabs }, response => {
+        $scope.$apply(function(){
+            if( response && response.result === "success" ) {
+                tombstone[ "cookies" ] = response[ "cookies" ];
+            }
+            else {
+                tombstone[ "cookies" ][ "error" ] = response && response.what ? response.what : "Failed to seal cookies.";
+            }
+
+            $scope.tabsInfo = JSON.stringify( tombstone );
+        });
+    });
+};
+
 Spiffo.pvfnSiftWinTabsGroupBy   = function ( winTabss ) {
     let winMapped = {};
 
@@ -82,7 +114,7 @@ Spiffo.app.controller("tombstoneController", function ($scope, $http) {
     Spiffo.fnGetTabsInfos = function (  ) {
         Spiffo.fnGetTabsInfosRecall(function(tabs) {
             $scope.$apply(function(){
-                $scope.tabsInfo = JSON.stringify( [ tabs ] );
+                Spiffo.pvfnSealTabsToArea( $scope, tabs, $scope.includeCookies );
             });
         });
     };
@@ -95,7 +127,7 @@ Spiffo.app.controller("tombstoneController", function ($scope, $http) {
             chrome.tabs.query({ windowId: currentWindowId }, function (tabs) {
                 //trace( "Tabs in current window: ", tabs );
                 $scope.$apply(function(){
-                    $scope.tabsInfo = JSON.stringify( [ tabs ] );
+                    Spiffo.pvfnSealTabsToArea( $scope, tabs, $scope.includeCookies );
                 });
             });
         });
@@ -118,6 +150,29 @@ Spiffo.app.controller("tombstoneController", function ($scope, $http) {
                     return;
                 }
 
+                if( szTabsTombArea.startsWith( "{" ) && szTabsTombArea.endsWith( "}" ) ) {
+                    let tombstone = JSON.parse( szTabsTombArea );
+                    if( tombstone[ "spiffoTombstoneVersion" ] === 2 && tombstone[ "windows" ] ) {
+                        let restoreWins = function () {
+                            Spiffo.pvfnSummonWinsAndTabs( tombstone[ "windows" ] );
+                        };
+
+                        if( tombstone[ "cookies" ] && tombstone[ "cookies" ][ "included" ] ) {
+                            chrome.runtime.sendMessage({ action: "RestoreCookies", cookies: tombstone[ "cookies" ] }, response => {
+                                if( response && response.result === "error" ) {
+                                    alert( response.what );
+                                }
+                                restoreWins();
+                            });
+                        }
+                        else {
+                            restoreWins();
+                        }
+
+                        return;
+                    }
+                }
+
                 var jUrls = szTabsTombArea.split( "\n" );
                 if( jUrls.length ) {
                     for ( let i = 0; i < jUrls.length; i++ ) {
@@ -136,6 +191,7 @@ Spiffo.app.controller("tombstoneController", function ($scope, $http) {
 
     $scope.urlList = [];
     $scope.Spiffo   = Spiffo;
+    $scope.includeCookies = false;
 
 
     $scope.getTabsUrl = function() {
@@ -147,4 +203,3 @@ Spiffo.app.controller("tombstoneController", function ($scope, $http) {
     };
 
 });
-

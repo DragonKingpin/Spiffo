@@ -1,0 +1,257 @@
+html {
+    background: #f3f3f3;
+}
+
+body {
+    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    margin: 0;
+    color: #111111;
+    background: #f3f3f3;
+}
+
+input[ type = "button" ] {
+    min-height: 23px;
+    margin: 0 3px 6px 0;
+    padding: 2px 8px 3px;
+    border: 1px solid #d8d8d8;
+    border-radius: 2px;
+    background: #f7f7f7;
+    color: #111111;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 17px;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+input[ type = "button" ]:hover {
+    border-color: #c8c8c8;
+    background: #eeeeee;
+}
+
+input[ type = "button" ]:active {
+    background: #e8e8e8;
+    box-shadow: none;
+}
+
+input[ type = "button" ]:focus-visible,
+input[ type = "checkbox" ]:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 1px solid #1677ff;
+    outline-offset: 1px;
+}
+
+h5 {
+    margin: 0 0 9px 0;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+h6 {
+    margin: 0.6em 0 0.6em 0;
+}
+
+textarea {
+    width: 535px;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid #dcdcdc;
+    border-radius: 2px;
+    background: #ffffff;
+    color: #111111;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.35;
+    resize: vertical;
+    box-shadow: none;
+}
+
+textarea:focus {
+    border-color: #1677ff;
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(22, 119, 255, 0.18);
+}
+
+a {
+    color: #1677ff;
+    text-decoration: underline;
+}
+
+.panel {
+    width: 540px;
+    padding: 0 10px 10px;
+    background: #ffffff;
+    border: 0;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.window-title {
+    height: auto;
+    margin: 0 0 12px;
+    padding: 12px 0 10px;
+    border-bottom: 1px solid #e5e5e5;
+    background: transparent;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    box-shadow: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.section {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.button-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.button-group {
+    width: 80%;
+}
+
+.button-side {
+    width: 20%;
+    text-align: right;
+}
+
+.button-side input[ type = "button" ] {
+    min-width: 100px;
+    border-color: #9ed9b3;
+    background: #f0fff5;
+    color: #16803c;
+    font-weight: 600;
+}
+
+.button-side input[ type = "button" ]:hover {
+    border-color: #71c893;
+    background: #e4faec;
+}
+
+.cookie-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 24px;
+    margin: 4px 0 10px 0;
+    color: #666666;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.cookie-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.switch-track,
+.switch-button {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 20px;
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 999px;
+    background: #b9dcff;
+    box-shadow: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+button.switch-button {
+    min-height: 20px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    font-size: 0;
+    line-height: 0;
+}
+
+.switch-track::after,
+.switch-button::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+    transition: left 120ms ease;
+}
+
+.cookie-option input:checked + .switch-track,
+.switch-button-on {
+    background: #2f9bff;
+}
+
+.cookie-option input:checked + .switch-track::after,
+.switch-button-on::after {
+    left: 15px;
+}
+
+.cookie-option input:focus-visible + .switch-track,
+.switch-button:focus-visible {
+    outline: 1px solid #1677ff;
+    outline-offset: 2px;
+}
+
+.tombstone-area {
+    height: 100px;
+}
+
+.title-area {
+    height: 35px;
+    margin-bottom: 6px;
+}
+
+.content-editable-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eeeeee;
+}
+
+.content-editable-row strong {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.switch-button:hover {
+    background: #a9d5ff;
+}
+
+.switch-button-on:hover {
+    background: #2f9bff;
+}
+
+.footer {
+    margin: 14px 0 0 0;
+    text-align: right;
+    font-size: 12px;
+    color: #666666;
+}

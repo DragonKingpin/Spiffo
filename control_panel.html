@@ -2,24 +2,7 @@
 <html ng-app="myapp" ng-csp>
     <head>
         <title>Spiffo - Control Panel</title>
-        <style>
-            body {
-                font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-                font-size: 100%;
-            }
-
-            input[ type = "button" ] {
-                margin-bottom: 6px;
-            }
-
-            h5 {
-                margin: 0.8em 0 0.8em 0;
-            }
-
-            h6 {
-                margin: 0.6em 0 0.6em 0;
-            }
-        </style>
+        <link rel="stylesheet" href="control_panel.css"/>
         <script src="angular.min.js"></script>
         <script src="pinecone.js"></script>
         <script src="spiffo.js"></script>
@@ -27,29 +10,34 @@
         <script src="tab_control.js"></script>
     </head>
     <body>
-        <div style="width: 540px">
-            <h5>Bean Nuts Walnut Trident Spiffo - Control Panel</h5>
+        <div class="panel">
+            <h5 class="window-title">Bean Nuts Walnut Trident Spiffo - Control Panel</h5>
 
-            <div ng-controller="tombstoneController" id="tombstone">
-                <h5>1. Tombstone: </h5>
-                <div style="display: flex">
-                    <div style="width: 80%">
+            <div class="section" ng-controller="tombstoneController" id="tombstone">
+                <h5>Tombstone</h5>
+                <div class="button-row">
+                    <div class="button-group">
                         <input type="button" ng-click="Spiffo.fnGetTabsInfos();" value="Seal all wins/tabs"/>
 
                         <input type="button" ng-click="Spiffo.fnGetCurrentWinTabsInfos();" value="Seal tabs in current win"/>
                     </div>
 
-                    <div style="width: 20%; text-align: right">
+                    <div class="button-side">
                         <input type="button" ng-click="Spiffo.fnSpawnTabsFromInfos();" value="Resurrect"/>
                     </div>
                 </div>
+                <label class="cookie-option">
+                    <span>Include cookies for sealed tabs</span>
+                    <input type="checkbox" ng-model="includeCookies"/>
+                    <span class="switch-track"></span>
+                </label>
 
-                <textarea id="tabsTombArea" style="width: 535px; height: 100px">{{tabsInfo}}</textarea>
+                <textarea id="tabsTombArea" class="tombstone-area">{{tabsInfo}}</textarea>
             </div>
 
-            <div ng-controller="tabControlController" id="tabControl">
-                <h5>2. Rename Title: </h5>
-                <textarea id="title-editor" style="width: 535px; height: 35px">{{currentTabTitle}}</textarea>
+            <div class="section" ng-controller="tabControlController" id="tabControl">
+                <h5>Rename Title</h5>
+                <textarea id="title-editor" class="title-area">{{currentTabTitle}}</textarea>
                 <input type="button" value="Rename this" ng-click="Spiffo.tabControl.fnRenameThis(false);"/>
 
                 <input type="button" ng-if="!titleIsLocked" value="Lock title" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(true, false);"
@@ -62,14 +50,14 @@
                 />
                 <input type="button" ng-if="titleIsLockedAppend" value="Unlock Append" ng-click="Spiffo.tabControl.fnSetLockTitleStatus(false, false);"/>
 
-                <div>
-                    <strong style="font-size: 0.83em;">3. ContentEditable:&nbsp;</strong>
-                    <input type="button" ng-if="!bodyContentEditable" value="Enable" ng-click="Spiffo.tabControl.setContentEditableStatus(true);"/>
-                    <input type="button" ng-if="bodyContentEditable" value="Disable" ng-click="Spiffo.tabControl.setContentEditableStatus(false);"/>
+                <div class="content-editable-row">
+                    <strong>ContentEditable</strong>
+                    <button class="switch-button" type="button" ng-if="!bodyContentEditable" title="Enable" ng-click="Spiffo.tabControl.setContentEditableStatus(true);"></button>
+                    <button class="switch-button switch-button-on" type="button" ng-if="bodyContentEditable" title="Disable" ng-click="Spiffo.tabControl.setContentEditableStatus(false);"></button>
                 </div>
             </div>
 
-            <h5 style="text-align: right">by <a href="https://www.dragonking.cn" target="_blank">Dragon King (undefined)</a></h5>
+            <h5 class="footer">by <a href="https://www.dragonking.cn" target="_blank">Dragon King</a></h5>
         </div>
     </body>
 </html>

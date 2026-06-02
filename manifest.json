@@ -24,6 +24,8 @@
     "type": "module"
   },
 
+  "incognito": "split",
+
   "content_scripts": [
     {
       "matches": [
@@ -45,6 +47,10 @@
       "js": ["fuckers/fuckZhiHu.js"]
     },
     {
+      "matches": ["http://www.bilibili.com/*", "https://www.bilibili.com/*"],
+      "js": ["fuckers/fuckBilibili.js"]
+    },
+    {
       "matches": ["http://*/*","https://*/*"],
       "js": [
         "fuckers/fuckThemAll2Death.js"
@@ -61,6 +67,7 @@
     "tabs",
     "activeTab",
     "storage",
-    "scripting"
+    "scripting",
+    "cookies"
   ]
 }
